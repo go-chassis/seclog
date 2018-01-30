@@ -120,3 +120,16 @@ This project may include a number of subcomponents with separate
 copyright notices and license terms. Your use of these subcomponents
 is subject to the terms and conditions of each subcomponent's license,
 as noted in the LICENSE file.
+
+
+
+
+
+
+========================================================================
+
+For vendor/github.com/ServiceComb/paas-lager/third_party/forked/cloudfoundry/lager:
+
+========================================================================
+
+See /third_party/forked/cloudfoundry/lager/LICENSE
