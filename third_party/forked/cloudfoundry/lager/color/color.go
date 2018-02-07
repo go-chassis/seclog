@@ -23,12 +23,3 @@ var (
 	ErrorByte = []byte(fmt.Sprintf("\x1b[0;%dm%s\x1b[0m", Red, "ERROR"))
 	FatalByte = []byte(fmt.Sprintf("\x1b[0;%dm%s\x1b[0m", Magenta, "FATAL"))
 )
-//ColorString is a function
-func colorString(str string, color int) string {
-	switch color {
-	case Black, Red, Green, Yellow, Blue, Magenta, Cyan, White:
-		return fmt.Sprintf("\x1b[0;%dm%s\x1b[0m", color, str)
-	default:
-		return str
-	}
-}
