@@ -90,7 +90,32 @@ func (l *logger) WithData(data Data) Logger {
 	}
 }
 
+// Find the sink need to log
+func (l *logger) activeSinks(loglevel LogLevel) []Sink {
+	ss := make([]Sink, len(l.sinks))
+	idx := 0
+	for _, itf := range l.sinks {
+		if s, ok := itf.(*writerSink); ok && loglevel < s.minLogLevel {
+			continue
+		}
+		if s, ok := itf.(*ReconfigurableSink); ok && loglevel < LogLevel(s.minLogLevel) {
+			continue
+		}
+		ss[idx] = itf
+		idx++
+	}
+	return ss[:idx]
+}
+
 func (l *logger) log(loglevel LogLevel, action string, err error, data ...Data) {
+	ss := l.activeSinks(loglevel)
+	if len(ss) == 0 {
+		return
+	}
+	l.logs(ss, loglevel, action, err, data...)
+}
+
+func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, err error, data ...Data) {
 	logData := l.baseData(data...)
 
 	if err != nil {
@@ -165,8 +190,12 @@ func (l *logger) Fatal(action string, err error, data ...Data) {
 }
 
 func (l *logger) logf(loglevel LogLevel, err error, format string, args ...interface{}) {
+	ss := l.activeSinks(loglevel)
+	if len(ss) == 0 {
+		return
+	}
 	logmsg := fmt.Sprintf(format, args...)
-	l.log(loglevel, logmsg, err)
+	l.logs(ss, loglevel, logmsg, err)
 }
 
 func (l *logger) Debugf(format string, args ...interface{}) {
