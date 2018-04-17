@@ -1,18 +1,19 @@
-package stlager_test
+package log_test
 
 import (
 	"github.com/ServiceComb/paas-lager"
 	"testing"
+	"fmt"
 )
 
 func BenchmarkInit(b *testing.B) {
-	stlager.Init(stlager.Config{
+	log.Init(log.Config{
 		LoggerLevel:   "DEBUG",
 		LogFormatText: true,
-		Writers:       []string{"file"},
+		Writers:       []string{"file","stdout"},
 	})
 
-	logger := stlager.NewLogger("example")
+	logger := log.NewLogger("example")
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -20,4 +21,14 @@ func BenchmarkInit(b *testing.B) {
 		}
 	})
 	b.ReportAllocs()
+}
+type w struct{
+
+}
+func (w *w)Write(p []byte) (n int, err error){
+	fmt.Print("fake")
+	return 2,nil
+}
+func TestRegisterWriter(t *testing.T) {
+	log.RegisterWriter("test",&w{})
 }
