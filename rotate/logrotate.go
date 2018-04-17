@@ -301,11 +301,12 @@ func CopyFile(srcFile, destFile string) error {
 	return err
 }
 
+//RotateConfig is log rotate configs
 type RotateConfig struct {
-	RollingPolicy  string
-	LogRotateSize  int
+	RollingPolicy  string // size or daily
+	LogRotateSize  int    //M Bytes.
 	LogBackupCount int
-	LogRotateDate  int
+	LogRotateDate  int //hours
 }
 
 // RunLogRotate initialize log rotate
