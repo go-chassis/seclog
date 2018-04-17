@@ -13,9 +13,13 @@ import (
 const (
 	//DEBUG is a constant of string type
 	DEBUG = "DEBUG"
-	INFO  = "INFO"
-	WARN  = "WARN"
+	//INFO is constant for info level log
+	INFO = "INFO"
+	//WARN is constant for warn level log
+	WARN = "WARN"
+	//ERROR is constant for error level log
 	ERROR = "ERROR"
+	//FATAL is constant for fail level log
 	FATAL = "FATAL"
 )
 
