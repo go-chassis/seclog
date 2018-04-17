@@ -13,3 +13,8 @@
 {"level":"WARN","timestamp":"2018-04-17 12:05:54.331 +08:00","file":"examples/main.go:29","msg":"failed-to-do-somthing","data":{"error":"Oops, error occurred","info":"something"}}
 {"level":"ERROR","timestamp":"2018-04-17 12:05:54.332 +08:00","file":"examples/main.go:34","msg":"failed-to-do-somthing","data":{"error":"This is an error"}}
 {"level":"INFO","timestamp":"2018-04-17 12:05:54.332 +08:00","file":"examples/main.go:36","msg":"shutting-down"}
+{"level":"INFO","timestamp":"2018-04-17 14:52:53.534 +08:00","file":"examples/main.go:22","msg":"Hi paas-bot, system is starting up ..."}
+{"level":"DEBUG","timestamp":"2018-04-17 14:52:53.535 +08:00","file":"examples/main.go:24","msg":"check-info","data":{"info":"something"}}
+{"level":"WARN","timestamp":"2018-04-17 14:52:53.535 +08:00","file":"examples/main.go:29","msg":"failed-to-do-somthing","data":{"error":"Oops, error occurred","info":"something"}}
+{"level":"ERROR","timestamp":"2018-04-17 14:52:53.535 +08:00","file":"examples/main.go:34","msg":"failed-to-do-somthing","data":{"error":"This is an error"}}
+{"level":"INFO","timestamp":"2018-04-17 14:52:53.535 +08:00","file":"examples/main.go:36","msg":"shutting-down"}

@@ -13,7 +13,7 @@ func main() {
 		LoggerLevel:   "DEBUG",
 		LoggerFile:    "test.log",
 		EnableRsyslog: false,
-		LogFormatText: false,
+		LogFormatText: true,
 		Writers:       []string{"file", "stdout"},
 	})
 
@@ -26,9 +26,10 @@ func main() {
 	})
 
 	err := fmt.Errorf("Oops, error occurred")
-	logger.Warn("failed-to-do-somthing", err, lager.Data{
+	logger.Warn("failed-to-do-somthing", lager.Data{
 		"info": "something",
 	})
+	logger.Warnf("failed-to-do-%s-somthing", "1")
 
 	err = fmt.Errorf("This is an error")
 	logger.Error("failed-to-do-somthing", err)

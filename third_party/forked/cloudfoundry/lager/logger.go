@@ -8,8 +8,10 @@ import (
 	"sync/atomic"
 	"time"
 )
+
 //StackTraceBufferSize is a constant which defines stack track buffer size
 const StackTraceBufferSize = 1024 * 100
+
 //Logger is a interface
 type Logger interface {
 	RegisterSink(Sink)
@@ -17,12 +19,12 @@ type Logger interface {
 	SessionName() string
 	Debug(action string, data ...Data)
 	Info(action string, data ...Data)
-	Warn(action string, err error, data ...Data)
+	Warn(action string, data ...Data)
 	Error(action string, err error, data ...Data)
 	Fatal(action string, err error, data ...Data)
 	Debugf(format string, args ...interface{})
 	Infof(format string, args ...interface{})
-	Warnf(err error, format string, args ...interface{})
+	Warnf(format string, args ...interface{})
 	Errorf(err error, format string, args ...interface{})
 	Fatalf(err error, format string, args ...interface{})
 	WithData(Data) Logger
@@ -37,6 +39,7 @@ type logger struct {
 	data          Data
 	logFormatText bool
 }
+
 //NewLoggerExt is a function which returns logger struct object
 func NewLoggerExt(component string, isFormatText bool) Logger {
 	return &logger{
@@ -47,18 +50,22 @@ func NewLoggerExt(component string, isFormatText bool) Logger {
 		logFormatText: isFormatText,
 	}
 }
+
 //NewLogger is a function used to get new logger object
 func NewLogger(component string) Logger {
 	return NewLoggerExt(component, true)
 }
+
 //RegisterSink is a function used to register sink
 func (l *logger) RegisterSink(sink Sink) {
 	l.sinks = append(l.sinks, sink)
 }
+
 //SessionName is used to get the session name
 func (l *logger) SessionName() string {
 	return l.task
 }
+
 //Session is a function which returns logger details for that session
 func (l *logger) Session(task string, data ...Data) Logger {
 	sid := atomic.AddUint64(&l.nextSession, 1)
@@ -79,6 +86,7 @@ func (l *logger) Session(task string, data ...Data) Logger {
 		data:      l.baseData(data...),
 	}
 }
+
 //WithData which adds data to the logger object
 func (l *logger) WithData(data Data) Logger {
 	return &logger{
@@ -177,8 +185,8 @@ func (l *logger) Info(action string, data ...Data) {
 	l.log(INFO, action, nil, data...)
 }
 
-func (l *logger) Warn(action string, err error, data ...Data) {
-	l.log(WARN, action, err, data...)
+func (l *logger) Warn(action string, data ...Data) {
+	l.log(WARN, action, nil, data...)
 }
 
 func (l *logger) Error(action string, err error, data ...Data) {
@@ -206,8 +214,8 @@ func (l *logger) Infof(format string, args ...interface{}) {
 	l.logf(INFO, nil, format, args...)
 }
 
-func (l *logger) Warnf(err error, format string, args ...interface{}) {
-	l.logf(WARN, err, format, args...)
+func (l *logger) Warnf(format string, args ...interface{}) {
+	l.logf(WARN, nil, format, args...)
 }
 
 func (l *logger) Errorf(err error, format string, args ...interface{}) {
