@@ -4,19 +4,21 @@ import (
 	"fmt"
 
 	"github.com/ServiceComb/paas-lager"
+	"github.com/ServiceComb/paas-lager/rotate"
 	"github.com/ServiceComb/paas-lager/third_party/forked/cloudfoundry/lager"
 )
 
 func main() {
-	stlager.Init(stlager.Config{
+	log.Init(log.Config{
 		LoggerLevel:   "DEBUG",
-		LoggerFile:    "",
+		LoggerFile:    "test.log",
 		EnableRsyslog: false,
 		LogFormatText: false,
+		Writers:       []string{"file", "stdout"},
 	})
 
-	logger := stlager.NewLogger("example")
-
+	logger := log.NewLogger("example")
+	rotate.RunLogRotate("test.log", &rotate.RotateConfig{}, logger)
 	logger.Infof("Hi %s, system is starting up ...", "paas-bot")
 
 	logger.Debug("check-info", lager.Data{
@@ -32,4 +34,5 @@ func main() {
 	logger.Error("failed-to-do-somthing", err)
 
 	logger.Info("shutting-down")
+
 }
