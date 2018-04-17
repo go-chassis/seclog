@@ -26,7 +26,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ServiceComb/go-chassis/core/common"
 	"github.com/ServiceComb/paas-lager/third_party/forked/cloudfoundry/lager"
 	"log"
 )
@@ -36,9 +35,10 @@ var Logger lager.Logger
 
 // constant values for logrotate parameters
 const (
-	LogRotateDate  = 1
-	LogRotateSize  = 10
-	LogBackupCount = 7
+	LogRotateDate     = 1
+	LogRotateSize     = 10
+	LogBackupCount    = 7
+	RollingPolicySize = "size"
 )
 
 // EscapPath escape path
@@ -324,7 +324,7 @@ func RunLogRotate(logFilePath string, c *RotateConfig, logger lager.Logger) {
 			}
 		}()
 	} else {
-		if c.RollingPolicy == common.Size {
+		if c.RollingPolicy == RollingPolicySize {
 			go func() {
 				for {
 					LogRotate(filepath.Dir(logFilePath), c.LogRotateSize, c.LogBackupCount)
@@ -346,10 +346,10 @@ func RunLogRotate(logFilePath string, c *RotateConfig, logger lager.Logger) {
 func checkConfig(c *RotateConfig) {
 	if c.RollingPolicy == "" {
 		log.Println("RollingPolicy is empty, use default policy[size]")
-		c.RollingPolicy = common.RollingPolicySize
-	} else if c.RollingPolicy != "daily" && c.RollingPolicy != common.RollingPolicySize {
+		c.RollingPolicy = RollingPolicySize
+	} else if c.RollingPolicy != "daily" && c.RollingPolicy != RollingPolicySize {
 		log.Printf("RollingPolicy is error, RollingPolicy=%s, use default policy[size].", c.RollingPolicy)
-		c.RollingPolicy = common.RollingPolicySize
+		c.RollingPolicy = RollingPolicySize
 	}
 
 	if c.LogRotateDate <= 0 || c.LogRotateDate > 10 {
