@@ -22,43 +22,19 @@ logger := paas_lager.NewLogger(component)
 对于大多数的使用场景，可以只配置下面的参数即可。
 Create logger (simple mode)
 ```go
-paas_lager.Init(paas_lager.Config{
-        LoggerLevel:   loggerLevel,
-        LoggerFile:    loggerFile,
-        EnableRsyslog: enableRsyslog,
-})
+	log.Init(log.Config{
+		LoggerLevel:   "DEBUG",
+		LoggerFile:    "test.log",
+		EnableRsyslog: false,
+		LogFormatText: false,
+		Writers:       []string{"file", "stdout"},
+	})
 
-logger := paas_lager.NewLogger(component)
+	logger := log.NewLogger("example")
 ```
 Run log rotate
 ```go
 rotate.RunLogRotate("test.log", &rotate.RotateConfig{}, logger)
 ```
-#### Example
-```
-func main() {
- 	log.Init(log.Config{
- 		LoggerLevel:   "DEBUG",
- 		LoggerFile:    "",
- 		EnableRsyslog: false,
- 		LogFormatText: false,
- 	})
 
- 	logger := log.NewLogger("example")
-
- 	logger.Infof("Hi %s, system is starting up ...", "paas-bot")
-
- 	logger.Debug("check-info", lager.Data{
- 		"info": "something",
- 	})
-
- 	err := fmt.Errorf("Oops, error occurred")
- 	logger.Warn("failed-to-do-somthing", err, lager.Data{
- 		"info": "something",
- 	})
-
- 	err = fmt.Errorf("This is an error")
- 	logger.Error("failed-to-do-somthing", err)
-
- 	logger.Info("shutting-down")
- }
+See [Example](examples/main.go)

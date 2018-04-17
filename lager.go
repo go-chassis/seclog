@@ -19,8 +19,6 @@ const (
 	FATAL = "FATAL"
 )
 
-
-
 //Config is a struct which stores details for maintaining logs
 type Config struct {
 	LoggerLevel    string

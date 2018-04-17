@@ -7,16 +7,19 @@ import (
 	"os"
 	"time"
 )
+
 //Writer is a struct
 type Writer struct {
 	conn net.Conn
 }
 
 var syslogHeader string
+
 //New is a function
 func New() (*Writer, error) {
 	return Dial("", "", "", "")
 }
+
 //Dial is a function
 func Dial(component, appguid, network, raddr string) (*Writer, error) {
 
@@ -36,6 +39,7 @@ func Dial(component, appguid, network, raddr string) (*Writer, error) {
 		conn: conn,
 	}, err
 }
+
 //Write is a function used to write
 func (r *Writer) Write(b []byte) (int, error) {
 	nl := ""
@@ -52,10 +56,12 @@ func (r *Writer) Write(b []byte) (int, error) {
 
 	return len(b), nil
 }
+
 //Close is a function used to close connection
 func (r *Writer) Close() error {
 	return r.conn.Close()
 }
+
 //unixSyslog is a function
 func unixSyslog() (net.Conn, error) {
 	networks := []string{"unixgram", "unix"}

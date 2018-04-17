@@ -1,16 +1,16 @@
 package log_test
 
 import (
+	"fmt"
 	"github.com/ServiceComb/paas-lager"
 	"testing"
-	"fmt"
 )
 
 func BenchmarkInit(b *testing.B) {
 	log.Init(log.Config{
 		LoggerLevel:   "DEBUG",
 		LogFormatText: true,
-		Writers:       []string{"file","stdout"},
+		Writers:       []string{"file", "stdout"},
 	})
 
 	logger := log.NewLogger("example")
@@ -22,13 +22,14 @@ func BenchmarkInit(b *testing.B) {
 	})
 	b.ReportAllocs()
 }
-type w struct{
 
+type w struct {
 }
-func (w *w)Write(p []byte) (n int, err error){
+
+func (w *w) Write(p []byte) (n int, err error) {
 	fmt.Print("fake")
-	return 2,nil
+	return 2, nil
 }
 func TestRegisterWriter(t *testing.T) {
-	log.RegisterWriter("test",&w{})
+	log.RegisterWriter("test", &w{})
 }
