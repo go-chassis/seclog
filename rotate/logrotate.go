@@ -12,7 +12,7 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-// Package lager is the package for lager
+// Package rotate is the package for rotate
 package rotate
 
 import (
@@ -30,8 +30,11 @@ import (
 	"log"
 )
 
-var pathReplacer *strings.Replacer
-var Logger lager.Logger
+var (
+	pathReplacer *strings.Replacer
+	//Logger is a object for Logger interface
+	Logger lager.Logger
+)
 
 // constant values for logrotate parameters
 const (
