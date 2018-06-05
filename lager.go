@@ -25,14 +25,13 @@ const (
 
 //Config is a struct which stores details for maintaining logs
 type Config struct {
-	LoggerLevel    string
-	LoggerFile     string
-	Writers        []string
+	LoggerLevel    string   `yaml:"loggerLevel"`
+	LoggerFile     string   `yaml:"loggerFile"`
+	Writers        []string `yaml:"writers,flow"`
+	LogFormatText  bool     `yaml:"logFormatText"`
 	EnableRsyslog  bool
 	RsyslogNetwork string
 	RsyslogAddr    string
-
-	LogFormatText bool
 }
 
 var config = DefaultConfig()
