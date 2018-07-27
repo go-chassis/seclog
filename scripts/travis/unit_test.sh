@@ -3,11 +3,11 @@ set -e
 
 go get -d -u github.com/stretchr/testify/assert
 
-cd $GOPATH/src/github.com/ServiceComb
+cd $GOPATH/src/github.com/go-chassis
 rm -rf paas-lager
-git clone https://github.com/ServiceComb/paas-lager.git
+git clone https://github.com/go-chassis/paas-lager.git
 
-cd $GOPATH/src/github.com/ServiceComb/paas-lager
+cd $GOPATH/src/github.com/go-chassis/paas-lager
 #Start unit test
 for d in $(go list ./... | grep -v third_party); do
     echo $d

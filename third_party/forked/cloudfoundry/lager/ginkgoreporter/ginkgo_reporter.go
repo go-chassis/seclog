@@ -5,7 +5,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/ServiceComb/paas-lager/third_party/forked/cloudfoundry/lager"
+	"github.com/go-chassis/paas-lager/third_party/forked/cloudfoundry/lager"
 	"github.com/onsi/ginkgo/config"
 	"github.com/onsi/ginkgo/types"
 )

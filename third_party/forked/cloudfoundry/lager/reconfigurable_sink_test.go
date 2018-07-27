@@ -1,8 +1,8 @@
 package lager_test
 
 import (
-	"github.com/ServiceComb/paas-lager/lager"
-	"github.com/ServiceComb/paas-lager/lager/lagertest"
+	"github.com/go-chassis/paas-lager/lager"
+	"github.com/go-chassis/paas-lager/lager/lagertest"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
