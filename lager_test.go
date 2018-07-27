@@ -2,7 +2,7 @@ package log_test
 
 import (
 	"fmt"
-	"github.com/ServiceComb/paas-lager"
+	"github.com/go-chassis/paas-lager"
 	"gopkg.in/yaml.v2"
 	"testing"
 )

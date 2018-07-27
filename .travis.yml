@@ -5,10 +5,10 @@ go:
 install: true
 
 before_script:
-  - mkdir -p $HOME/gopath/src/github.com/ServiceComb/paas-lager
-  - rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/ServiceComb/paas-lager/
-  - export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/ServiceComb/paas-lager
-  - cd $HOME/gopath/src/github.com/ServiceComb/paas-lager
+  - mkdir -p $HOME/gopath/src/github.com/go-chassis/paas-lager
+  - rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/go-chassis/paas-lager/
+  - export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/go-chassis/paas-lager
+  - cd $HOME/gopath/src/github.com/go-chassis/paas-lager
 jobs:
   include:
     - stage: Format Checker
@@ -35,6 +35,4 @@ jobs:
         - bash -x scripts/travis/goCycloChecker.sh
     - stage: Unit Test
       script:
-        - go get -u github.com/FiloSottile/gvt
-        - bash -x scripts/travis/start_latest_sc.sh 
-        - bash -x scripts/travis/unit_test.sh 
+        - bash -x scripts/travis/unit_test.sh

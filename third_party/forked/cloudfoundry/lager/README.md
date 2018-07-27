@@ -9,7 +9,7 @@ Instantiate a logger with the name of your component.
 
 ```go
 import (
-  "github.com/ServiceComb/paas_lager/lager"
+  "github.com/go-chassis/paas_lager/lager"
 )
 
 logger := lager.NewLogger("my-app")
