@@ -2,6 +2,7 @@ package lager
 
 import (
 	"fmt"
+	"github.com/go-mesh/openlogging"
 	"runtime"
 	"strconv"
 	"strings"
@@ -15,19 +16,20 @@ const StackTraceBufferSize = 1024 * 100
 //Logger is a interface
 type Logger interface {
 	RegisterSink(Sink)
-	Session(task string, data ...Data) Logger
+	Session(task string, data ...openlogging.Tags) Logger
 	SessionName() string
-	Debug(action string, data ...Data)
-	Info(action string, data ...Data)
-	Warn(action string, data ...Data)
-	Error(action string, err error, data ...Data)
-	Fatal(action string, err error, data ...Data)
+	Debug(action string, data ...openlogging.Tags)
+	Info(action string, data ...openlogging.Tags)
+	Warn(action string, data ...openlogging.Tags)
+	Error(action string, data ...openlogging.Tags)
+	Fatal(action string, data ...openlogging.Tags)
+
 	Debugf(format string, args ...interface{})
 	Infof(format string, args ...interface{})
 	Warnf(format string, args ...interface{})
-	Errorf(err error, format string, args ...interface{})
-	Fatalf(err error, format string, args ...interface{})
-	WithData(Data) Logger
+	Errorf(format string, args ...interface{})
+	Fatalf(format string, args ...interface{})
+	WithData(openlogging.Tags) Logger
 }
 
 type logger struct {
@@ -36,7 +38,7 @@ type logger struct {
 	sinks         []Sink
 	sessionID     string
 	nextSession   uint64
-	data          Data
+	data          openlogging.Tags
 	logFormatText bool
 }
 
@@ -46,7 +48,7 @@ func NewLoggerExt(component string, isFormatText bool) Logger {
 		component:     component,
 		task:          component,
 		sinks:         []Sink{},
-		data:          Data{},
+		data:          openlogging.Tags{},
 		logFormatText: isFormatText,
 	}
 }
@@ -67,7 +69,7 @@ func (l *logger) SessionName() string {
 }
 
 //Session is a function which returns logger details for that session
-func (l *logger) Session(task string, data ...Data) Logger {
+func (l *logger) Session(task string, data ...openlogging.Tags) Logger {
 	sid := atomic.AddUint64(&l.nextSession, 1)
 
 	var sessionIDstr string
@@ -88,7 +90,7 @@ func (l *logger) Session(task string, data ...Data) Logger {
 }
 
 //WithData which adds data to the logger object
-func (l *logger) WithData(data Data) Logger {
+func (l *logger) WithData(data openlogging.Tags) Logger {
 	return &logger{
 		component: l.component,
 		task:      l.task,
@@ -115,20 +117,16 @@ func (l *logger) activeSinks(loglevel LogLevel) []Sink {
 	return ss[:idx]
 }
 
-func (l *logger) log(loglevel LogLevel, action string, err error, data ...Data) {
+func (l *logger) log(loglevel LogLevel, action string, data ...openlogging.Tags) {
 	ss := l.activeSinks(loglevel)
 	if len(ss) == 0 {
 		return
 	}
-	l.logs(ss, loglevel, action, err, data...)
+	l.logs(ss, loglevel, action, data...)
 }
 
-func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, err error, data ...Data) {
+func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, data ...openlogging.Tags) {
 	logData := l.baseData(data...)
-
-	if err != nil {
-		logData["error"] = err.Error()
-	}
 
 	if loglevel == FATAL {
 		stackTrace := make([]byte, StackTraceBufferSize)
@@ -163,7 +161,7 @@ func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, err error, da
 			if jserr != nil {
 				fmt.Printf("[lager] ToJSON() ERROR! action: %s, jserr: %s, log: %+v", action, jserr, log)
 				// also output json marshal error event to sink
-				log.Data = Data{"Data": fmt.Sprint(logData)}
+				log.Data = openlogging.Tags{"Data": fmt.Sprint(logData)}
 				jsonerrdata, _ := log.ToJSON()
 				sink.Log(ERROR, jsonerrdata)
 				continue
@@ -173,61 +171,61 @@ func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, err error, da
 	}
 
 	if loglevel == FATAL {
-		panic(err)
+		panic(logInfo)
 	}
 }
 
-func (l *logger) Debug(action string, data ...Data) {
-	l.log(DEBUG, action, nil, data...)
+func (l *logger) Debug(action string, data ...openlogging.Tags) {
+	l.log(DEBUG, action, data...)
 }
 
-func (l *logger) Info(action string, data ...Data) {
-	l.log(INFO, action, nil, data...)
+func (l *logger) Info(action string, data ...openlogging.Tags) {
+	l.log(INFO, action, data...)
 }
 
-func (l *logger) Warn(action string, data ...Data) {
-	l.log(WARN, action, nil, data...)
+func (l *logger) Warn(action string, data ...openlogging.Tags) {
+	l.log(WARN, action, data...)
 }
 
-func (l *logger) Error(action string, err error, data ...Data) {
-	l.log(ERROR, action, err, data...)
+func (l *logger) Error(action string, data ...openlogging.Tags) {
+	l.log(ERROR, action, data...)
 }
 
-func (l *logger) Fatal(action string, err error, data ...Data) {
-	l.log(FATAL, action, err, data...)
+func (l *logger) Fatal(action string, data ...openlogging.Tags) {
+	l.log(FATAL, action, data...)
 }
 
-func (l *logger) logf(loglevel LogLevel, err error, format string, args ...interface{}) {
+func (l *logger) logf(loglevel LogLevel, format string, args ...interface{}) {
 	ss := l.activeSinks(loglevel)
 	if len(ss) == 0 {
 		return
 	}
 	logmsg := fmt.Sprintf(format, args...)
-	l.logs(ss, loglevel, logmsg, err)
+	l.logs(ss, loglevel, logmsg)
 }
 
 func (l *logger) Debugf(format string, args ...interface{}) {
-	l.logf(DEBUG, nil, format, args...)
+	l.logf(DEBUG, format, args...)
 }
 
 func (l *logger) Infof(format string, args ...interface{}) {
-	l.logf(INFO, nil, format, args...)
+	l.logf(INFO, format, args...)
 }
 
 func (l *logger) Warnf(format string, args ...interface{}) {
-	l.logf(WARN, nil, format, args...)
+	l.logf(WARN, format, args...)
 }
 
-func (l *logger) Errorf(err error, format string, args ...interface{}) {
-	l.logf(ERROR, err, format, args...)
+func (l *logger) Errorf(format string, args ...interface{}) {
+	l.logf(ERROR, format, args...)
 }
 
-func (l *logger) Fatalf(err error, format string, args ...interface{}) {
-	l.logf(FATAL, err, format, args...)
+func (l *logger) Fatalf(format string, args ...interface{}) {
+	l.logf(FATAL, format, args...)
 }
 
-func (l *logger) baseData(givenData ...Data) Data {
-	data := Data{}
+func (l *logger) baseData(givenData ...openlogging.Tags) openlogging.Tags {
+	data := openlogging.Tags{}
 
 	for k, v := range l.data {
 		data[k] = v
