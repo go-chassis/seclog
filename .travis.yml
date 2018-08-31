@@ -35,4 +35,5 @@ jobs:
         - bash -x scripts/travis/goCycloChecker.sh
     - stage: Unit Test
       script:
+        - go get -u gopkg.in/yaml.v2
         - bash -x scripts/travis/unit_test.sh

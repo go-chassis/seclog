@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/go-chassis/paas-lager"
 	"github.com/go-chassis/paas-lager/rotate"
-	"github.com/go-chassis/paas-lager/third_party/forked/cloudfoundry/lager"
+	"github.com/go-mesh/openlogging"
 )
 
 func main() {
@@ -21,18 +19,16 @@ func main() {
 	rotate.RunLogRotate("test.log", &rotate.RotateConfig{}, logger)
 	logger.Infof("Hi %s, system is starting up ...", "paas-bot")
 
-	logger.Debug("check-info", lager.Data{
+	logger.Debug("check-info", openlogging.Tags{
 		"info": "something",
 	})
 
-	err := fmt.Errorf("Oops, error occurred")
-	logger.Warn("failed-to-do-somthing", lager.Data{
+	logger.Warn("failed-to-do-somthing", openlogging.Tags{
 		"info": "something",
 	})
 	logger.Warnf("failed-to-do-%s-somthing", "1")
 
-	err = fmt.Errorf("This is an error")
-	logger.Error("failed-to-do-somthing", err)
+	logger.Error("failed-to-do-somthing")
 
 	logger.Info("shutting-down")
 
