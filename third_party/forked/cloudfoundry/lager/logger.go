@@ -16,13 +16,13 @@ const StackTraceBufferSize = 1024 * 100
 //Logger is a interface
 type Logger interface {
 	RegisterSink(Sink)
-	Session(task string, data ...openlogging.Tags) Logger
+	Session(task string, data ...openlogging.Option) Logger
 	SessionName() string
-	Debug(action string, data ...openlogging.Tags)
-	Info(action string, data ...openlogging.Tags)
-	Warn(action string, data ...openlogging.Tags)
-	Error(action string, data ...openlogging.Tags)
-	Fatal(action string, data ...openlogging.Tags)
+	Debug(action string, data ...openlogging.Option)
+	Info(action string, data ...openlogging.Option)
+	Warn(action string, data ...openlogging.Option)
+	Error(action string, data ...openlogging.Option)
+	Fatal(action string, data ...openlogging.Option)
 
 	Debugf(format string, args ...interface{})
 	Infof(format string, args ...interface{})
@@ -69,7 +69,11 @@ func (l *logger) SessionName() string {
 }
 
 //Session is a function which returns logger details for that session
-func (l *logger) Session(task string, data ...openlogging.Tags) Logger {
+func (l *logger) Session(task string, opts ...openlogging.Option) Logger {
+	opt := &openlogging.Options{}
+	for _, o := range opts {
+		o(opt)
+	}
 	sid := atomic.AddUint64(&l.nextSession, 1)
 
 	var sessionIDstr string
@@ -85,7 +89,7 @@ func (l *logger) Session(task string, data ...openlogging.Tags) Logger {
 		task:      fmt.Sprintf("%s.%s", l.task, task),
 		sinks:     l.sinks,
 		sessionID: sessionIDstr,
-		data:      l.baseData(data...),
+		data:      l.baseData(opt.Tags),
 	}
 }
 
@@ -117,16 +121,20 @@ func (l *logger) activeSinks(loglevel LogLevel) []Sink {
 	return ss[:idx]
 }
 
-func (l *logger) log(loglevel LogLevel, action string, data ...openlogging.Tags) {
+func (l *logger) log(loglevel LogLevel, action string, opts ...openlogging.Option) {
 	ss := l.activeSinks(loglevel)
 	if len(ss) == 0 {
 		return
 	}
-	l.logs(ss, loglevel, action, data...)
+	l.logs(ss, loglevel, action, opts...)
 }
 
-func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, data ...openlogging.Tags) {
-	logData := l.baseData(data...)
+func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, opts ...openlogging.Option) {
+	opt := &openlogging.Options{}
+	for _, o := range opts {
+		o(opt)
+	}
+	logData := l.baseData(opt.Tags)
 
 	if loglevel == FATAL {
 		stackTrace := make([]byte, StackTraceBufferSize)
@@ -175,23 +183,23 @@ func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, data ...openl
 	}
 }
 
-func (l *logger) Debug(action string, data ...openlogging.Tags) {
+func (l *logger) Debug(action string, data ...openlogging.Option) {
 	l.log(DEBUG, action, data...)
 }
 
-func (l *logger) Info(action string, data ...openlogging.Tags) {
+func (l *logger) Info(action string, data ...openlogging.Option) {
 	l.log(INFO, action, data...)
 }
 
-func (l *logger) Warn(action string, data ...openlogging.Tags) {
+func (l *logger) Warn(action string, data ...openlogging.Option) {
 	l.log(WARN, action, data...)
 }
 
-func (l *logger) Error(action string, data ...openlogging.Tags) {
+func (l *logger) Error(action string, data ...openlogging.Option) {
 	l.log(ERROR, action, data...)
 }
 
-func (l *logger) Fatal(action string, data ...openlogging.Tags) {
+func (l *logger) Fatal(action string, data ...openlogging.Option) {
 	l.log(FATAL, action, data...)
 }
 
@@ -224,7 +232,7 @@ func (l *logger) Fatalf(format string, args ...interface{}) {
 	l.logf(FATAL, format, args...)
 }
 
-func (l *logger) baseData(givenData ...openlogging.Tags) openlogging.Tags {
+func (l *logger) baseData(givenData openlogging.Tags) openlogging.Tags {
 	data := openlogging.Tags{}
 
 	for k, v := range l.data {
@@ -232,10 +240,8 @@ func (l *logger) baseData(givenData ...openlogging.Tags) openlogging.Tags {
 	}
 
 	if len(givenData) > 0 {
-		for _, dataArg := range givenData {
-			for key, val := range dataArg {
-				data[key] = val
-			}
+		for key, val := range givenData {
+			data[key] = val
 		}
 	}
 
