@@ -36,4 +36,5 @@ jobs:
     - stage: Unit Test
       script:
         - go get -u gopkg.in/yaml.v2
+        - go get -u github.com/go-mesh/openlogging
         - bash -x scripts/travis/unit_test.sh
