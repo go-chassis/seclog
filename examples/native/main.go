@@ -19,13 +19,13 @@ func main() {
 	rotate.RunLogRotate("test.log", &rotate.RotateConfig{}, logger)
 	logger.Infof("Hi %s, system is starting up ...", "paas-bot")
 
-	logger.Debug("check-info", openlogging.Tags{
+	logger.Debug("check-info", openlogging.WithTags(openlogging.Tags{
 		"info": "something",
-	})
+	}))
 
-	logger.Warn("failed-to-do-somthing", openlogging.Tags{
+	logger.Warn("failed-to-do-somthing", openlogging.WithTags(openlogging.Tags{
 		"info": "something",
-	})
+	}))
 	logger.Warnf("failed-to-do-%s-somthing", "1")
 
 	logger.Error("failed-to-do-somthing")
