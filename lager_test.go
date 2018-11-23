@@ -3,7 +3,6 @@ package log_test
 import (
 	"fmt"
 	"github.com/go-chassis/paas-lager"
-	"gopkg.in/yaml.v2"
 	"testing"
 )
 
@@ -11,7 +10,7 @@ func BenchmarkInit(b *testing.B) {
 	log.Init(log.Config{
 		LoggerLevel:   "DEBUG",
 		LogFormatText: true,
-		Writers:       []string{"file", "stdout"},
+		Writers:       []string{"stdout"},
 	})
 
 	logger := log.NewLogger("example")
@@ -33,19 +32,4 @@ func (w *w) Write(p []byte) (n int, err error) {
 }
 func TestRegisterWriter(t *testing.T) {
 	log.RegisterWriter("test", &w{})
-}
-
-func TestInit(t *testing.T) {
-	b := []byte(`
-writers: [file, stdout]
-
-`)
-	c := &log.Config{}
-	err := yaml.Unmarshal(b, c)
-	if err != nil {
-		t.Error(err)
-	}
-	if len(c.Writers) != 2 {
-		t.Error(c.Writers)
-	}
 }
