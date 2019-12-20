@@ -5,8 +5,8 @@ import (
 	"io"
 	"time"
 
-	"github.com/go-chassis/paas_lager/lager"
-	. "github.com/go-chassis/paas_lager/lager/chug"
+	"github.com/go-chassis/paas-lager/third_party/forked/cloudfoundry/lager"
+	. "github.com/go-chassis/paas-lager/third_party/forked/cloudfoundry/lager/chug"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

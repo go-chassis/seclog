@@ -4,7 +4,7 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/go-chassis/paas-lager/lager"
+	"github.com/go-chassis/paas-lager/third_party/forked/cloudfoundry/lager"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
