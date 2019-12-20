@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/go-chassis/paas_lager/lager/chug"
+	"github.com/go-chassis/paas-lager/third_party/forked/cloudfoundry/lager/chug"
 	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/types"
 )

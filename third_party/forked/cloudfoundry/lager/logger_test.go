@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/go-chassis/paas-lager/lager"
-	"github.com/go-chassis/paas-lager/lager/lagertest"
+	"github.com/go-chassis/paas-lager/third_party/forked/cloudfoundry/lager"
+	"github.com/go-chassis/paas-lager/third_party/forked/cloudfoundry/lager/lagertest"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
