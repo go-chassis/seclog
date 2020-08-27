@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/go-chassis/openlog"
 	"github.com/go-chassis/paas-lager"
-	"github.com/go-mesh/openlogging"
 )
 
 func main() {
@@ -15,18 +15,18 @@ func main() {
 	})
 
 	logger := log.NewLogger("example")
-	openlogging.SetLogger(logger)
+	openlog.SetLogger(logger)
 
-	openlogging.Debug("check-info", openlogging.WithTags(openlogging.Tags{
+	openlog.Debug("check-info", openlog.WithTags(openlog.Tags{
 		"info": "something",
 	}))
 
-	openlogging.Warn("failed-to-do-somthing", openlogging.WithTags(openlogging.Tags{
+	openlog.Warn("failed-to-do-somthing", openlog.WithTags(openlog.Tags{
 		"info": "something",
 	}))
 
-	openlogging.Error("failed-to-do-somthing")
+	openlog.Error("failed-to-do-somthing")
 
-	openlogging.Info("shutting-down")
+	openlog.Info("shutting-down")
 
 }
