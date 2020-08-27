@@ -23,12 +23,6 @@ type Logger interface {
 	Warn(action string, data ...openlog.Option)
 	Error(action string, data ...openlog.Option)
 	Fatal(action string, data ...openlog.Option)
-
-	Debugf(format string, args ...interface{})
-	Infof(format string, args ...interface{})
-	Warnf(format string, args ...interface{})
-	Errorf(format string, args ...interface{})
-	Fatalf(format string, args ...interface{})
 	WithData(openlog.Tags) Logger
 }
 
@@ -115,7 +109,6 @@ func (l *logger) SetLogLevel(level LogLevel) {
 		}
 	}
 }
-
 
 // Find the sink need to log
 func (l *logger) activeSinks(loglevel LogLevel) []Sink {

@@ -4,10 +4,10 @@ set -e
 go get -d -u github.com/stretchr/testify/assert
 
 cd $GOPATH/src/github.com/go-chassis
-rm -rf paas-lager
-git clone https://github.com/go-chassis/paas-lager.git
+rm -rf seclog
+git clone https://github.com/go-chassis/seclog.git
 
-cd $GOPATH/src/github.com/go-chassis/paas-lager
+cd $GOPATH/src/github.com/go-chassis/seclog
 #Start unit test
 for d in $(go list ./... | grep -v third_party); do
     echo $d

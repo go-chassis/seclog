@@ -1,4 +1,4 @@
-module github.com/go-chassis/paas-lager
+module github.com/go-chassis/seclog
 
 go 1.13
 

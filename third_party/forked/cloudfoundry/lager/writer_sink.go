@@ -2,7 +2,7 @@ package lager
 
 import (
 	"bytes"
-	"github.com/go-chassis/paas-lager/third_party/forked/cloudfoundry/lager/color"
+	"github.com/go-chassis/seclog/third_party/forked/cloudfoundry/lager/color"
 	"io"
 	"sync"
 )

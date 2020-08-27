@@ -1,8 +1,8 @@
-package log
+package seclog
 
 import (
 	"fmt"
-	"github.com/go-chassis/paas-lager/third_party/forked/cloudfoundry/lager"
+	"github.com/go-chassis/seclog/third_party/forked/cloudfoundry/lager"
 	"io"
 	"log"
 	"os"

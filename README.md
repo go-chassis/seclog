@@ -1,17 +1,16 @@
-# Logging Utility for Go-Chassis
+# seclog
 
-A structured logger for Go
-
+A secure log tool fo go
 ### Usage
 Create logger
 ```
-log.Init(paas_lager.Config{
+seclog.Init(seclog.Config{
         LoggerLevel:   loggerLevel,
         LoggerFile:    loggerFile,
         LogFormatText:  false,
 })
 
-logger := paas_lager.NewLogger(component)
+logger := seclog.NewLogger(component)
 ```
 
 * LoggerLevel: 日志级别由低到高分别为 DEBUG, INFO, WARN, ERROR, FATAL 共5个级别，这里设置的级别是日志输出的最低级别，只有不低于该级别的日志才会输出
@@ -20,7 +19,7 @@ logger := paas_lager.NewLogger(component)
 
 Create logger with multiple sinker
 ```go
-	log.Init(log.Config{
+	seclog.Init(seclog.Config{
 		LoggerLevel:   "DEBUG",
 		LoggerFile:    "test.log",
 		EnableRsyslog: false,
@@ -28,7 +27,7 @@ Create logger with multiple sinker
 		Writers:       []string{"file", "stdout"},
 	})
 
-	logger := log.NewLogger("example")
+	logger := seclog.NewLogger("example")
 ```
 Run log rotate
 ```go
@@ -45,7 +44,7 @@ func (w *w) Write(p []byte) (n int, err error) {
 	return 0, nil
 }
 func main() {
-	log.RegisterWriter("test", &w{})
+	seclog.RegisterWriter("test", &w{})
 }
 
 ```

@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/go-chassis/openlog"
-	"github.com/go-chassis/paas-lager"
+	"github.com/go-chassis/seclog"
 )
 
 func main() {
-	log.Init(log.Config{
+	seclog.Init(seclog.Config{
 		LoggerLevel:   "DEBUG",
 		LoggerFile:    "test.log",
 		EnableRsyslog: false,
@@ -14,7 +14,7 @@ func main() {
 		Writers:       []string{"file", "stdout"},
 	})
 
-	logger := log.NewLogger("example")
+	logger := seclog.NewLogger("example")
 	openlog.SetLogger(logger)
 
 	openlog.Debug("check-info", openlog.WithTags(openlog.Tags{
