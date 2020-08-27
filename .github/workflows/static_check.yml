@@ -16,8 +16,6 @@ jobs:
       run: go build -v .
     - name: UT
       run: |
-        bash scripts/ci/start_latest_sc.sh
-        go get github.com/stretchr/testify
         bash scripts/ci/unit_test.sh
   tests:
     runs-on: ubuntu-latest
@@ -34,15 +32,3 @@ jobs:
       - name: Fmt
         run: |
           bash scripts/ci/formatChecker.sh
-      - name: Misspell
-        run: |
-          go get -u github.com/client9/misspell/cmd/misspell
-          bash scripts/ci/formatChecker.sh
-      - name: Lint
-        run: |
-          go get -u golang.org/x/lint/golint
-          bash scripts/ci/goLintChecker.sh
-      - name: Cyclo
-        run: |
-          go get github.com/fzipp/gocyclo
-          bash scripts/ci/goCycloChecker.sh

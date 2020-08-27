@@ -16,7 +16,7 @@ func main() {
 	})
 
 	logger := seclog.NewLogger("example")
-	rotate.RunLogRotate("test.log", &rotate.RotateConfig{}, logger)
+	rotate.RunLogRotate("test.log", &rotate.Config{}, logger)
 
 	logger.Debug("check-info", openlog.WithTags(openlog.Tags{
 		"info": "something",

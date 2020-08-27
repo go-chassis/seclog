@@ -47,9 +47,11 @@ func (r *Writer) Write(b []byte) (int, error) {
 		nl = "\n"
 	}
 
-	r.conn.SetWriteDeadline(time.Now().Add(1 * time.Second))
-
-	_, err := fmt.Fprintf(r.conn, "  %s  %s%s", syslogHeader, b, nl)
+	err := r.conn.SetWriteDeadline(time.Now().Add(1 * time.Second))
+	if err != nil {
+		return 0, err
+	}
+	_, err = fmt.Fprintf(r.conn, "  %s  %s%s", syslogHeader, b, nl)
 	if err != nil {
 		return 0, err
 	}
