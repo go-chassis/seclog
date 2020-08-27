@@ -69,7 +69,6 @@ func removeExceededFiles(path string, baseFileName string,
 	if maxKeptCount < 0 {
 		return
 	}
-	fileList := make([]string, 0, 2*maxKeptCount)
 	var pat string
 	if rotateStage == "rollover" {
 		//rotated file, svc.log.20060102150405000
@@ -304,8 +303,8 @@ func CopyFile(srcFile, destFile string) error {
 	return err
 }
 
-//RotateConfig is log rotate configs
-type RotateConfig struct {
+//Config is log rotate configs
+type Config struct {
 	RollingPolicy  string `yaml:"rollingPolicy"` // size or daily
 	LogRotateSize  int    `yaml:"logRotateSize"` //M Bytes.
 	LogBackupCount int    `yaml:"logBackupCount"`
@@ -313,7 +312,7 @@ type RotateConfig struct {
 }
 
 // RunLogRotate initialize log rotate
-func RunLogRotate(logFilePath string, c *RotateConfig, logger lager.Logger) {
+func RunLogRotate(logFilePath string, c *Config, logger lager.Logger) {
 	Logger = logger
 	if logFilePath == "" {
 		return
@@ -346,7 +345,7 @@ func RunLogRotate(logFilePath string, c *RotateConfig, logger lager.Logger) {
 }
 
 // checkPassLagerDefinition check pass lager definition
-func checkConfig(c *RotateConfig) {
+func checkConfig(c *Config) {
 	if c.RollingPolicy == "" {
 		log.Println("RollingPolicy is empty, use default policy[size]")
 		c.RollingPolicy = RollingPolicySize
