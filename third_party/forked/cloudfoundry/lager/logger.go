@@ -2,7 +2,7 @@ package lager
 
 import (
 	"fmt"
-	"github.com/go-mesh/openlogging"
+	"github.com/go-chassis/openlog"
 	"runtime"
 	"strconv"
 	"strings"
@@ -16,21 +16,20 @@ const StackTraceBufferSize = 1024 * 100
 //Logger is a interface
 type Logger interface {
 	RegisterSink(Sink)
-	SetLogLevel(LogLevel)
-	Session(task string, data ...openlogging.Option) Logger
+	Session(task string, data ...openlog.Option) Logger
 	SessionName() string
-	Debug(action string, data ...openlogging.Option)
-	Info(action string, data ...openlogging.Option)
-	Warn(action string, data ...openlogging.Option)
-	Error(action string, data ...openlogging.Option)
-	Fatal(action string, data ...openlogging.Option)
+	Debug(action string, data ...openlog.Option)
+	Info(action string, data ...openlog.Option)
+	Warn(action string, data ...openlog.Option)
+	Error(action string, data ...openlog.Option)
+	Fatal(action string, data ...openlog.Option)
 
 	Debugf(format string, args ...interface{})
 	Infof(format string, args ...interface{})
 	Warnf(format string, args ...interface{})
 	Errorf(format string, args ...interface{})
 	Fatalf(format string, args ...interface{})
-	WithData(openlogging.Tags) Logger
+	WithData(openlog.Tags) Logger
 }
 
 type logger struct {
@@ -39,7 +38,7 @@ type logger struct {
 	sinks         []Sink
 	sessionID     string
 	nextSession   uint64
-	data          openlogging.Tags
+	data          openlog.Tags
 	logFormatText bool
 }
 
@@ -49,7 +48,7 @@ func NewLoggerExt(component string, isFormatText bool) Logger {
 		component:     component,
 		task:          component,
 		sinks:         []Sink{},
-		data:          openlogging.Tags{},
+		data:          openlog.Tags{},
 		logFormatText: isFormatText,
 	}
 }
@@ -70,8 +69,8 @@ func (l *logger) SessionName() string {
 }
 
 //Session is a function which returns logger details for that session
-func (l *logger) Session(task string, opts ...openlogging.Option) Logger {
-	opt := &openlogging.Options{}
+func (l *logger) Session(task string, opts ...openlog.Option) Logger {
+	opt := &openlog.Options{}
 	for _, o := range opts {
 		o(opt)
 	}
@@ -95,7 +94,7 @@ func (l *logger) Session(task string, opts ...openlogging.Option) Logger {
 }
 
 //WithData which adds data to the logger object
-func (l *logger) WithData(data openlogging.Tags) Logger {
+func (l *logger) WithData(data openlog.Tags) Logger {
 	return &logger{
 		component: l.component,
 		task:      l.task,
@@ -135,7 +134,7 @@ func (l *logger) activeSinks(loglevel LogLevel) []Sink {
 	return ss[:idx]
 }
 
-func (l *logger) log(loglevel LogLevel, action string, opts ...openlogging.Option) {
+func (l *logger) log(loglevel LogLevel, action string, opts ...openlog.Option) {
 	ss := l.activeSinks(loglevel)
 	if len(ss) == 0 {
 		return
@@ -143,8 +142,8 @@ func (l *logger) log(loglevel LogLevel, action string, opts ...openlogging.Optio
 	l.logs(ss, loglevel, action, opts...)
 }
 
-func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, opts ...openlogging.Option) {
-	opt := &openlogging.Options{}
+func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, opts ...openlog.Option) {
+	opt := &openlog.Options{}
 	for _, o := range opts {
 		o(opt)
 	}
@@ -183,7 +182,7 @@ func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, opts ...openl
 			if jserr != nil {
 				fmt.Printf("[lager] ToJSON() ERROR! action: %s, jserr: %s, log: %+v", action, jserr, log)
 				// also output json marshal error event to sink
-				log.Data = openlogging.Tags{"Data": fmt.Sprint(logData)}
+				log.Data = openlog.Tags{"Data": fmt.Sprint(logData)}
 				jsonerrdata, _ := log.ToJSON()
 				sink.Log(ERROR, jsonerrdata)
 				continue
@@ -197,23 +196,23 @@ func (l *logger) logs(ss []Sink, loglevel LogLevel, action string, opts ...openl
 	}
 }
 
-func (l *logger) Debug(action string, data ...openlogging.Option) {
+func (l *logger) Debug(action string, data ...openlog.Option) {
 	l.log(DEBUG, action, data...)
 }
 
-func (l *logger) Info(action string, data ...openlogging.Option) {
+func (l *logger) Info(action string, data ...openlog.Option) {
 	l.log(INFO, action, data...)
 }
 
-func (l *logger) Warn(action string, data ...openlogging.Option) {
+func (l *logger) Warn(action string, data ...openlog.Option) {
 	l.log(WARN, action, data...)
 }
 
-func (l *logger) Error(action string, data ...openlogging.Option) {
+func (l *logger) Error(action string, data ...openlog.Option) {
 	l.log(ERROR, action, data...)
 }
 
-func (l *logger) Fatal(action string, data ...openlogging.Option) {
+func (l *logger) Fatal(action string, data ...openlog.Option) {
 	l.log(FATAL, action, data...)
 }
 
@@ -246,8 +245,8 @@ func (l *logger) Fatalf(format string, args ...interface{}) {
 	l.logf(FATAL, format, args...)
 }
 
-func (l *logger) baseData(givenData openlogging.Tags) openlogging.Tags {
-	data := openlogging.Tags{}
+func (l *logger) baseData(givenData openlog.Tags) openlog.Tags {
+	data := openlog.Tags{}
 
 	for k, v := range l.data {
 		data[k] = v

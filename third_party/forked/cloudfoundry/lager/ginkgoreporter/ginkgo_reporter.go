@@ -9,12 +9,14 @@ import (
 	"github.com/onsi/ginkgo/config"
 	"github.com/onsi/ginkgo/types"
 )
+
 //SuiteStartSummary is a struct
 type SuiteStartSummary struct {
 	RandomSeed                 int64  `json:"random_seed"`
 	SuiteDescription           string `json:"description"`
 	NumberOfSpecsThatWillBeRun int    `json:"num_specs"`
 }
+
 //SuiteEndSummary is a struct
 type SuiteEndSummary struct {
 	SuiteDescription           string `json:"description"`
@@ -23,6 +25,7 @@ type SuiteEndSummary struct {
 	NumberOfPassedSpecs        int `json:"num_passed"`
 	NumberOfFailedSpecs        int `json:"num_failed"`
 }
+
 //SpecSummary is a struct
 type SpecSummary struct {
 	Name     []string      `json:"name"`
@@ -33,6 +36,7 @@ type SpecSummary struct {
 
 	StackTrace string `json:"stack_trace,omitempty"`
 }
+
 //SetupSummary is a struct
 type SetupSummary struct {
 	Name    string        `json:"name"`
@@ -42,6 +46,7 @@ type SetupSummary struct {
 
 	StackTrace string `json:"stack_trace,omitempty"`
 }
+
 //New is a function which returns GinkoReporter object
 func New(writer io.Writer) *GinkgoReporter {
 	logger := lager.NewLogger("ginkgo")
@@ -51,18 +56,21 @@ func New(writer io.Writer) *GinkgoReporter {
 		logger: logger,
 	}
 }
+
 //GinkgoReporter is a struct
 type GinkgoReporter struct {
 	logger  lager.Logger
 	writer  io.Writer
 	session lager.Logger
 }
+
 //wrappedWithNewlines is a method used to get new line in log
 func (g *GinkgoReporter) wrappedWithNewlines(f func()) {
 	g.writer.Write([]byte("\n"))
 	f()
 	g.writer.Write([]byte("\n"))
 }
+
 //SpecSuiteWillBegin is a method
 func (g *GinkgoReporter) SpecSuiteWillBegin(config config.GinkgoConfigType, summary *types.SuiteSummary) {
 	if config.ParallelTotal > 1 {
@@ -73,9 +81,11 @@ func (g *GinkgoReporter) SpecSuiteWillBegin(config config.GinkgoConfigType, summ
 		g.logger = session
 	}
 }
+
 //BeforeSuiteDidRun is a method
 func (g *GinkgoReporter) BeforeSuiteDidRun(setupSummary *types.SetupSummary) {
 }
+
 //SpecWillRun is a method
 func (g *GinkgoReporter) SpecWillRun(specSummary *types.SpecSummary) {
 	g.wrappedWithNewlines(func() {
@@ -88,6 +98,7 @@ func (g *GinkgoReporter) SpecWillRun(specSummary *types.SpecSummary) {
 		})
 	})
 }
+
 //SpecDidComplete is a method used to check whether a spec got complete
 func (g *GinkgoReporter) SpecDidComplete(specSummary *types.SpecSummary) {
 	g.wrappedWithNewlines(func() {
@@ -115,9 +126,11 @@ func (g *GinkgoReporter) SpecDidComplete(specSummary *types.SpecSummary) {
 		g.session = nil
 	})
 }
+
 //AfterSuiteDidRunis a method
 func (g *GinkgoReporter) AfterSuiteDidRun(setupSummary *types.SetupSummary) {
 }
+
 //SpecSuiteDidEnd is a method
 func (g *GinkgoReporter) SpecSuiteDidEnd(summary *types.SuiteSummary) {
 }
