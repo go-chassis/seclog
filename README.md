@@ -49,3 +49,8 @@ func main() {
 
 ```
 See [Examples](examples)
+
+Change log level on-fly
+```go
+l.SetLogLevel(lager.ERROR)
+```

@@ -16,6 +16,7 @@ const StackTraceBufferSize = 1024 * 100
 //Logger is a interface
 type Logger interface {
 	RegisterSink(Sink)
+	SetLogLevel(LogLevel)
 	Session(task string, data ...openlog.Option) Logger
 	SessionName() string
 	Debug(action string, data ...openlog.Option)
