@@ -3,6 +3,7 @@ package seclog
 import (
 	"fmt"
 	"github.com/go-chassis/seclog/third_party/forked/cloudfoundry/lager"
+	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
 	"log"
 	"os"
@@ -25,13 +26,17 @@ const (
 
 //Config is a struct which stores details for maintaining logs
 type Config struct {
-	LoggerLevel    string   `yaml:"loggerLevel"`
-	LoggerFile     string   `yaml:"loggerFile"`
-	Writers        []string `yaml:"writers,flow"`
-	LogFormatText  bool     `yaml:"logFormatText"`
-	EnableRsyslog  bool
-	RsyslogNetwork string
-	RsyslogAddr    string
+	LoggerLevel   string   `yaml:"loggerLevel"`
+	LoggerFile    string   `yaml:"loggerFile"`
+	Writers       []string `yaml:"writers"`
+	LogFormatText bool     `yaml:"logFormatText"`
+
+	//for rotate
+	RotateDisable bool `yaml:"rotateDisable"`
+	MaxSize       int  `yaml:"maxSize"`
+	MaxAge        int  `yaml:"maxAge"`
+	MaxBackups    int  `yaml:"maxBackups"`
+	Compress      bool `yaml:"compress"`
 }
 
 var config = DefaultConfig()
@@ -50,12 +55,9 @@ func RegisterWriter(name string, writer io.Writer) {
 //DefaultConfig is a function which retuns config object with default configuration
 func DefaultConfig() *Config {
 	return &Config{
-		LoggerLevel:    INFO,
-		LoggerFile:     "",
-		EnableRsyslog:  false,
-		RsyslogNetwork: "udp",
-		RsyslogAddr:    "127.0.0.1:5140",
-		LogFormatText:  false,
+		LoggerLevel:   INFO,
+		LoggerFile:    "",
+		LogFormatText: false,
 	}
 }
 
@@ -70,17 +72,6 @@ func Init(c Config) {
 		config.Writers = append(config.Writers, "file")
 	}
 
-	if c.EnableRsyslog {
-		config.EnableRsyslog = c.EnableRsyslog
-	}
-
-	if c.RsyslogNetwork != "" {
-		config.RsyslogNetwork = c.RsyslogNetwork
-	}
-
-	if c.RsyslogAddr != "" {
-		config.RsyslogAddr = c.RsyslogAddr
-	}
 	if len(c.Writers) == 0 {
 		config.Writers = append(config.Writers, "stdout")
 
@@ -92,9 +83,20 @@ func Init(c Config) {
 	var file io.Writer
 	var err error
 	if config.LoggerFile != "" {
-		file, err = os.OpenFile(config.LoggerFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-		if err != nil {
-			panic(err)
+		if c.RotateDisable {
+			file, err = os.OpenFile(config.LoggerFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			//TODO file perm
+			file = &lumberjack.Logger{
+				Filename:   config.LoggerFile,
+				MaxSize:    c.MaxSize, // megabytes
+				MaxBackups: c.MaxBackups,
+				MaxAge:     c.MaxAge,   //days
+				Compress:   c.Compress, // disabled by default
+			}
 		}
 
 	}
@@ -135,7 +137,7 @@ func NewLoggerExt(component string, appGUID string) lager.Logger {
 
 		writer, ok := Writers[sink]
 		if !ok {
-			log.Panic("Unknow writer: ", sink)
+			log.Panic("Unknown writer: ", sink)
 		}
 		sink := lager.NewReconfigurableSink(lager.NewWriterSink(sink, writer, lager.DEBUG), lagerLogLevel)
 		logger.RegisterSink(sink)

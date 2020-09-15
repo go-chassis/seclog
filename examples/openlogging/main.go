@@ -7,11 +7,10 @@ import (
 
 func main() {
 	seclog.Init(seclog.Config{
-		LoggerLevel:   "DEBUG",
-		LoggerFile:    "test.log",
-		EnableRsyslog: false,
-		LogFormatText: true,
-		Writers:       []string{"file", "stdout"},
+		LoggerLevel: "DEBUG",
+		LoggerFile:  "./test.log",
+		Writers:     []string{"file", "stdout"},
+		MaxSize:     1,
 	})
 
 	logger := seclog.NewLogger("example")
