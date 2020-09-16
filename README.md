@@ -22,16 +22,11 @@ Create logger with multiple sinker
 	seclog.Init(seclog.Config{
 		LoggerLevel:   "DEBUG",
 		LoggerFile:    "test.log",
-		EnableRsyslog: false,
 		LogFormatText: false,
 		Writers:       []string{"file", "stdout"},
 	})
 
 	logger := seclog.NewLogger("example")
-```
-Run log rotate
-```go
-rotate.RunLogRotate("test.log", &rotate.RotateConfig{}, logger)
 ```
 
 Custom your own sinker
