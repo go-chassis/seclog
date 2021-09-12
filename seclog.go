@@ -30,6 +30,7 @@ type Config struct {
 	LoggerFile    string   `yaml:"loggerFile"`
 	Writers       []string `yaml:"writers"`
 	LogFormatText bool     `yaml:"logFormatText"`
+	LogColorMode  string   `yaml:"logColorMode"`
 
 	//for rotate
 	RotateDisable bool `yaml:"rotateDisable"`
@@ -58,6 +59,7 @@ func DefaultConfig() *Config {
 		LoggerLevel:   INFO,
 		LoggerFile:    "",
 		LogFormatText: false,
+		LogColorMode:  lager.ColorModeAuto,
 	}
 }
 
@@ -65,6 +67,14 @@ func DefaultConfig() *Config {
 func Init(c Config) {
 	if c.LoggerLevel != "" {
 		config.LoggerLevel = c.LoggerLevel
+	}
+	switch c.LogColorMode {
+	case lager.ColorModeAuto, lager.ColorModeNever, lager.ColorModeAlways:
+		config.LogColorMode = c.LogColorMode
+	case "":
+	default:
+		panic(fmt.Sprintf("log color mode should be: %s/%s/%s, but got: %s",
+			lager.ColorModeAuto, lager.ColorModeAlways, lager.ColorModeNever, c.LogColorMode))
 	}
 
 	if c.LoggerFile != "" {
@@ -139,7 +149,7 @@ func NewLoggerExt(component string, appGUID string) lager.Logger {
 		if !ok {
 			log.Panic("Unknown writer: ", sink)
 		}
-		sink := lager.NewReconfigurableSink(lager.NewWriterSink(sink, writer, lager.DEBUG), lagerLogLevel)
+		sink := lager.NewReconfigurableSink(lager.NewWriterSink(sink, writer, lager.DEBUG, config.LogColorMode), lagerLogLevel)
 		logger.RegisterSink(sink)
 	}
 
