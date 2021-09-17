@@ -8,6 +8,7 @@ seclog.Init(seclog.Config{
         LoggerLevel:   loggerLevel,
         LoggerFile:    loggerFile,
         LogFormatText:  false,
+        LogColorMode:  "auto",
 })
 
 logger := seclog.NewLogger(component)
@@ -16,6 +17,7 @@ logger := seclog.NewLogger(component)
 * LoggerLevel: 日志级别由低到高分别为 DEBUG, INFO, WARN, ERROR, FATAL 共5个级别，这里设置的级别是日志输出的最低级别，只有不低于该级别的日志才会输出
 * LoggerFile: 输出日志的文件名，为空则输出到 os.Stdout
 * LogFormatText: 设定日志的输出格式是 json 还是 plaintext
+* LogColorMode: 设定日志的输出是否带颜色，auto: 自动，只有writer是stdout时才带颜色；always：带颜色；never：不带颜色；默认auto
 
 Create logger with multiple sinker
 ```go
@@ -24,6 +26,7 @@ Create logger with multiple sinker
 		LoggerFile:    "test.log",
 		LogFormatText: false,
 		Writers:       []string{"file", "stdout"},
+		LogColorMode:  "auto",
 	})
 
 	logger := seclog.NewLogger("example")

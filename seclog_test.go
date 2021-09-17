@@ -11,6 +11,7 @@ func TestNewLogger(t *testing.T) {
 		LoggerLevel:   "DEBUG",
 		LogFormatText: true,
 		Writers:       []string{"stdout"},
+		LogColorMode:  "auto",
 	})
 
 	logger := seclog.NewLogger("example")
